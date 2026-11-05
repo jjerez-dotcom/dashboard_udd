@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Interno - Test Vocacional UDD & Fundación Promueva</title>
+  <title>Dashboard Interno - Test de Orientación Vocacional UDD 2026</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -40,11 +40,12 @@
     [v-cloak] { display: none; }
     
     .custom-scrollbar::-webkit-scrollbar {
-      height: 6px;
-      width: 6px;
+      height: 8px;
+      width: 8px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
       background: #f1f5f9;
+      border-radius: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #cbd5e1;
@@ -79,7 +80,7 @@
     
     <!-- CABECERA INSTITUCIONAL CON LOGOS OFICIALES -->
     <header class="bg-white text-slate-900 shadow-md border-b-4 border-udd-cyan sticky top-0 z-30 no-print">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between py-4 h-24">
           
           <!-- LOGO UDD -->
@@ -88,14 +89,14 @@
               src="logo_udd.png" 
               alt="Universidad del Desarrollo" 
               class="h-12 sm:h-16 w-auto object-contain"
-              onerror="this.onerror=null; this.src='https://placehold.co/220x70/002B49/ffffff?text=UDD';"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/220x70?text=UDD';"
             />
           </div>
 
           <!-- TÍTULO PANEL & ESTADO SESIÓN -->
           <div class="hidden md:flex flex-col items-center text-center">
             <span class="text-xs font-extrabold uppercase tracking-widest text-udd-blue">Gestión Interna</span>
-            <h1 class="text-lg font-black text-udd-navy">Test Vocacional UDD</h1>
+            <h1 class="text-lg font-black text-udd-navy">Test de Orientación Vocacional UDD 2026</h1>
           </div>
 
           <!-- LOGO FUNDACIÓN PROMUEVA Y CERRAR SESIÓN -->
@@ -104,7 +105,7 @@
               src="logo_promueva.png" 
               alt="Fundación Promueva" 
               class="h-12 sm:h-16 w-auto object-contain"
-              onerror="this.onerror=null; this.src='https://placehold.co/220x70/ffffff/334155?text=Fundación+Promueva';"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/220x70?text=Fundación+Promueva';"
             />
 
             <button 
@@ -120,7 +121,7 @@
       </div>
     </header>
 
-    <!-- PANTALLA DE ACCESO PROTEGIDO (SI NO ESTÁ AUTENTICADO) -->
+    <!-- PANTALLA DE ACCESO PROTEGIDO -->
     <main v-if="!isAuthenticated" class="flex-grow flex items-center justify-center p-4">
       <div class="max-w-md w-full bg-white rounded-3xl p-8 shadow-2xl border border-slate-200 text-center space-y-6">
         <div class="w-20 h-20 bg-udd-lightCyan text-udd-navy rounded-3xl flex items-center justify-center mx-auto text-3xl border border-udd-cyan/30 shadow-inner">
@@ -161,7 +162,7 @@
     </main>
 
     <!-- CONTENIDO DEL DASHBOARD AUTENTICADO -->
-    <main v-else class="flex-grow py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+    <main v-else class="flex-grow py-8 px-4 sm:px-6 lg:px-8 max-w-[96%] mx-auto w-full space-y-8">
       
       <!-- BARRA SUPERIOR DE ACCIONES -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -169,42 +170,45 @@
           <div class="flex items-center space-x-2 mb-1">
             <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">Panel Activo</span>
             <span class="text-xs text-slate-400">|</span>
-            <span class="text-xs text-slate-500 font-mono">dashboard.html</span>
+            <span class="text-xs text-slate-500 font-mono">Inscripciones 2026</span>
           </div>
-          <h2 class="text-2xl font-black text-udd-navy tracking-tight">Registro General de Colegios Inscritos</h2>
-          <p class="text-xs text-slate-500">Supervisión en tiempo real, asignación de ejecutivos y exportación de datos.</p>
+          <h2 class="text-2xl font-black text-udd-navy tracking-tight flex items-center gap-3">
+            <span>Registro General de Colegios Inscritos</span>
+            <!-- BOTÓN DISCRETO DE ACTUALIZACIÓN -->
+            <button 
+              @click="loadRegistrations(true)" 
+              :disabled="isLoading"
+              title="Refrescar datos desde Google Sheets"
+              class="bg-white hover:bg-slate-50 text-slate-600 hover:text-udd-navy p-2 rounded-xl text-sm transition-all border border-slate-200 shadow-sm flex items-center justify-center">
+              <i class="fa-solid fa-arrows-rotate" :class="{ 'fa-spin text-udd-cyan': isLoading }"></i>
+            </button>
+          </h2>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
-          <!-- Botón Conectar Google Sheets -->
-          <button 
-            @click="showScriptModal = true"
-            class="bg-udd-blue hover:bg-udd-navy text-white font-bold text-xs px-4 py-3 rounded-xl transition-all flex items-center shadow-md">
-            <i class="fa-solid fa-code-branch mr-2"></i>
-            Conectar con Google Sheets
-          </button>
-
-          <!-- Botón Exportar Excel / CSV -->
-          <button 
-            @click="exportToCSV"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all flex items-center shadow-md">
-            <i class="fa-solid fa-file-excel mr-2 text-sm"></i>
-            Exportar a Excel (CSV)
-          </button>
+          <!-- BOTÓN VERDE ABRIR GOOGLE SHEETS -->
+          <a 
+            :href="GOOGLE_SHEETS_URL" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all flex items-center shadow-md">
+            <i class="fa-solid fa-arrow-up-right-from-square mr-2 text-sm"></i>
+            Abrir Google Sheets
+          </a>
         </div>
       </div>
 
-      <!-- TARJETAS DE MÉTRICAS (KPIS CON DESGLOSE SOLICITADO) -->
+      <!-- TARJETAS DE MÉTRICAS (KPIS ESTANDARIZADOS) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         <!-- TARJETA 1: TOTAL GENERAL -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
-              <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider block">Total General</span>
+              <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider block">Total General</span>
               <span class="text-3xl font-black text-udd-navy tracking-tight mt-1 block">{{ registrations.length }} Colegios</span>
             </div>
-            <div class="w-12 h-12 bg-udd-lightCyan rounded-2xl flex items-center justify-center text-udd-cyan text-xl border border-udd-cyan/20">
+            <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-udd-navy text-xl border border-slate-200">
               <i class="fa-solid fa-school"></i>
             </div>
           </div>
@@ -216,26 +220,26 @@
           </div>
         </div>
 
-        <!-- TARJETA 2: SEDE SANTIAGO -->
+        <!-- TARJETA 2: SEDE SANTIAGO (AZUL CORPORATIVO UDD) -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
-              <span class="text-xs font-extrabold text-purple-600 uppercase tracking-wider block">Sede Santiago</span>
+              <span class="text-xs font-extrabold text-udd-blue uppercase tracking-wider block">Sede Santiago</span>
               <span class="text-3xl font-black text-udd-navy tracking-tight mt-1 block">{{ countSantiagoColegios }} Colegios</span>
             </div>
-            <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 text-xl border border-purple-200">
-              <i class="fa-solid fa-building"></i>
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-udd-blue text-xl border border-blue-200">
+              <i class="fa-solid fa-school"></i>
             </div>
           </div>
           <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
             <span class="text-xs font-bold text-slate-500">Estudiantes Santiago:</span>
-            <span class="text-base font-mono font-black text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-lg">
+            <span class="text-base font-mono font-black text-udd-blue bg-blue-50 px-2.5 py-0.5 rounded-lg">
               {{ totalEstudiantesSantiago }}
             </span>
           </div>
         </div>
 
-        <!-- TARJETA 3: SEDE CONCEPCIÓN -->
+        <!-- TARJETA 3: SEDE CONCEPCIÓN (CIAN / ESMERALDA) -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
           <div class="flex justify-between items-start mb-4">
             <div>
@@ -243,7 +247,7 @@
               <span class="text-3xl font-black text-udd-navy tracking-tight mt-1 block">{{ countConcepcionColegios }} Colegios</span>
             </div>
             <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-xl border border-emerald-200">
-              <i class="fa-solid fa-location-dot"></i>
+              <i class="fa-solid fa-school"></i>
             </div>
           </div>
           <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
@@ -270,7 +274,7 @@
               <input 
                 type="text" 
                 v-model="searchQuery" 
-                placeholder="Buscar por Colegio, RBD, Comuna, Contacto o Ejecutivo..." 
+                placeholder="Buscar por Colegio, RBD, Comuna, Contacto o Contacto UDD..." 
                 class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-udd-cyan transition-all">
             </div>
           </div>
@@ -292,34 +296,49 @@
         </div>
       </div>
 
-      <!-- TABLA DE DATOS DE INSCRIPCIONES -->
+      <!-- TABLA CON BARRA DE DESPLAZAMIENTO DUPLEX (ARRIBA Y ABAJO) -->
       <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="w-full text-left text-xs border-collapse">
+        
+        <!-- BARRA SUPERIOR DE DESPLAZAMIENTO -->
+        <div 
+          ref="topScrollRef" 
+          @scroll="syncTopScroll" 
+          class="overflow-x-auto custom-scrollbar border-b border-slate-200 bg-slate-50">
+          <div :style="{ width: tableWidth + 'px' }" class="h-2.5"></div>
+        </div>
+
+        <!-- CONTENEDOR PRINCIPAL DE TABLA -->
+        <div 
+          ref="bottomScrollRef" 
+          @scroll="syncBottomScroll" 
+          class="overflow-x-auto custom-scrollbar">
+          
+          <table ref="tableElementRef" class="w-full text-left text-xs border-collapse min-w-[1100px]">
             <thead class="bg-udd-navy text-white uppercase tracking-wider font-semibold">
               <tr>
-                <th class="py-4 px-4 whitespace-nowrap">Código Registro</th>
+                <th class="py-4 px-4 whitespace-nowrap">Código</th>
                 <th class="py-4 px-4 whitespace-nowrap">Sede</th>
                 <th class="py-4 px-4 whitespace-nowrap">RBD</th>
                 <th class="py-4 px-4 whitespace-nowrap">Nombre Colegio</th>
                 <th class="py-4 px-4 whitespace-nowrap">Comuna</th>
-                <th class="py-4 px-4 whitespace-nowrap">Cursos / Alumnos / Fechas</th>
+                <th class="py-4 px-4 whitespace-nowrap">Detalle Cursos e Inscritos</th>
                 <th class="py-4 px-4 whitespace-nowrap">Contacto Colegio</th>
-                <th class="py-4 px-4 whitespace-nowrap">Ejecutivo UDD a Cargo</th>
+                <th class="py-4 px-4 whitespace-nowrap">Contacto UDD</th>
                 <th class="py-4 px-4 whitespace-nowrap text-center">Acciones</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr v-for="(row, idx) in filteredRegistrations" :key="row.codigoTracking || idx" class="hover:bg-slate-50 transition-colors">
+              <tr v-for="(row, idx) in filteredRegistrations" :key="row.codigoRegistro || idx" class="hover:bg-slate-50 transition-colors">
                 
-                <!-- CÓDIGO REGISTRO -->
-                <td class="py-3.5 px-4 font-mono font-bold text-udd-blue whitespace-nowrap">
-                  {{ row.codigoTracking }}
+                <!-- CÓDIGO REGISTRO (DESPLIEGUE EN 2 LÍNEAS) -->
+                <td class="py-3.5 px-4 font-mono font-bold text-udd-blue whitespace-nowrap leading-snug">
+                  <div>{{ getCodeLine1(row.codigoRegistro) }}</div>
+                  <div class="text-slate-600 text-[11px] font-semibold">{{ getCodeLine2(row.codigoRegistro) }}</div>
                 </td>
 
                 <!-- SEDE -->
                 <td class="py-3.5 px-4 whitespace-nowrap">
-                  <span :class="row.sede === 'Santiago' ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'" class="px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase">
+                  <span :class="row.sede === 'Santiago' ? 'bg-blue-100 text-udd-blue' : 'bg-emerald-100 text-emerald-800'" class="px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase">
                     {{ row.sede }}
                   </span>
                 </td>
@@ -339,36 +358,33 @@
                   {{ row.comuna }}
                 </td>
 
-                <!-- CURSOS / ALUMNOS / FECHAS -->
+                <!-- DETALLE CURSOS Y FECHAS -->
                 <td class="py-3.5 px-4 whitespace-nowrap">
-                  <div class="space-y-1">
-                    <div v-for="c in row.cursosResumen" :key="c.nombre" class="text-[11px] flex items-center space-x-2">
-                      <span class="font-bold text-slate-800">{{ c.nombre }}:</span>
-                      <span class="text-slate-500">{{ formatDate(c.fecha) }}</span>
-                      <span class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-bold">({{ c.alumnos }} est.)</span>
-                    </div>
+                  <div class="space-y-1 text-[11px]">
+                    <div v-if="row.curso_II_Medio && row.curso_II_Medio !== '-'"><span class="font-bold text-slate-700">II°:</span> {{ row.curso_II_Medio }}</div>
+                    <div v-if="row.curso_III_Medio && row.curso_III_Medio !== '-'"><span class="font-bold text-slate-700">III°:</span> {{ row.curso_III_Medio }}</div>
+                    <div v-if="row.curso_IV_Medio && row.curso_IV_Medio !== '-'"><span class="font-bold text-slate-700">IV°:</span> {{ row.curso_IV_Medio }}</div>
+                    <div v-if="row.curso_Egresados && row.curso_Egresados !== '-'"><span class="font-bold text-slate-700">Egr:</span> {{ row.curso_Egresados }}</div>
                   </div>
                 </td>
 
                 <!-- CONTACTO COLEGIO -->
                 <td class="py-3.5 px-4 whitespace-nowrap">
-                  <div class="font-bold text-slate-800">{{ row.nombreContacto }}</div>
-                  <div class="text-[10px] text-slate-500 font-semibold">{{ row.cargoContacto }}</div>
-                  <div class="text-[10px] text-udd-blue underline"><a :href="'mailto:' + row.emailContacto">{{ row.emailContacto }}</a></div>
-                  <div class="text-[10px] text-slate-500 font-mono">{{ row.celularContacto }}</div>
+                  <div class="font-bold text-slate-800">{{ row.contactoNombre }}</div>
+                  <div class="text-[10px] text-slate-500 font-semibold">{{ row.contactoCargo }}</div>
+                  <div class="text-[10px] text-udd-blue underline"><a :href="'mailto:' + row.contactoEmail">{{ row.contactoEmail }}</a></div>
+                  <div class="text-[10px] text-slate-500 font-mono">{{ row.contactoCelular }}</div>
                 </td>
 
-                <!-- EJECUTIVO UDD A CARGO (EDITABLE) -->
+                <!-- CONTACTO UDD (REASIGNABLE) -->
                 <td class="py-3.5 px-4 whitespace-nowrap">
                   <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-0.5 min-w-[190px]">
-                    <div class="font-bold text-udd-navy text-[11px] flex items-center justify-between">
-                      <span><i class="fa-solid fa-user-tie text-udd-cyan mr-1.5"></i> {{ row.ejecutivoUDD?.nombre || 'No asignado' }}</span>
-                      <button @click="openEditExecutiveModal(row)" class="text-udd-cyan hover:text-udd-navy p-1" title="Editar Ejecutivo">
+                    <div class="font-bold text-udd-navy text-[11px] flex items-center justify-between gap-2">
+                      <span class="truncate"><i class="fa-solid fa-user-tie text-udd-cyan mr-1.5"></i> {{ row.ejecutivo || 'No asignado' }}</span>
+                      <button @click="openEditExecutiveModal(row)" class="text-udd-cyan hover:text-udd-navy p-1 flex-shrink-0" title="Reasignar Contacto UDD">
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
                     </div>
-                    <div class="text-[10px] text-slate-500 truncate">{{ row.ejecutivoUDD?.email }}</div>
-                    <div class="text-[10px] text-slate-500 font-mono">{{ row.ejecutivoUDD?.celular }}</div>
                   </div>
                 </td>
 
@@ -377,9 +393,6 @@
                   <div class="flex items-center justify-center space-x-2">
                     <button @click="viewVoucher(row)" class="text-udd-cyan hover:text-udd-navy bg-udd-lightCyan p-2 rounded-lg" title="Ver Comprobante">
                       <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button @click="deleteRegistration(idx)" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg" title="Eliminar Registro">
-                      <i class="fa-solid fa-trash-can"></i>
                     </button>
                   </div>
                 </td>
@@ -398,13 +411,13 @@
 
     </main>
 
-    <!-- MODAL PARA EDITAR / ASIGNAR EJECUTIVO UDD -->
+    <!-- MODAL REASIGNAR CONTACTO UDD -->
     <div v-if="showEditExecutiveModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
       <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 border border-slate-100">
         <div class="flex justify-between items-center border-b pb-3">
           <h3 class="text-lg font-bold text-udd-navy flex items-center">
             <i class="fa-solid fa-user-gear text-udd-cyan mr-2"></i>
-            Editar Ejecutivo UDD Asignado
+            Reasignar Contacto UDD
           </h3>
           <button @click="showEditExecutiveModal = false" class="text-slate-400 hover:text-slate-600">
             <i class="fa-solid fa-xmark text-xl"></i>
@@ -412,81 +425,35 @@
         </div>
 
         <p class="text-xs text-slate-500">
-          Modificando ejecutivo para: <strong class="text-udd-navy">{{ editingRow.nombreColegio }}</strong>
+          Modificando responsable para: <strong class="text-udd-navy">{{ editingRow.nombreColegio }}</strong>
         </p>
 
-        <div class="space-y-3 text-xs">
+        <div class="space-y-4 text-xs">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Nombre Ejecutivo</label>
-            <input type="text" v-model="editExecForm.nombre" required class="w-full p-3 bg-slate-50 border rounded-xl focus:bg-white focus:ring-2 focus:ring-udd-cyan">
+            <label class="block font-bold text-slate-700 mb-1">Seleccionar Nuevo Contacto UDD *</label>
+            <select 
+              v-model="selectedExecutiveObj" 
+              class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-udd-cyan">
+              <option :value="null">-- Seleccione Ejecutivo --</option>
+              <option v-for="ej in ejecutivosDisponibles" :key="ej.email" :value="ej">
+                {{ ej.nombre }} ({{ ej.sede }})
+              </option>
+            </select>
           </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Email Ejecutivo</label>
-            <input type="email" v-model="editExecForm.email" required class="w-full p-3 bg-slate-50 border rounded-xl focus:bg-white focus:ring-2 focus:ring-udd-cyan">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Teléfono Ejecutivo</label>
-            <input type="tel" v-model="editExecForm.celular" required class="w-full p-3 bg-slate-50 border rounded-xl focus:bg-white focus:ring-2 focus:ring-udd-cyan">
+
+          <div v-if="selectedExecutiveObj" class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs space-y-1">
+            <p><strong class="text-slate-700">Email:</strong> {{ selectedExecutiveObj.email }}</p>
+            <p><strong class="text-slate-700">Teléfono:</strong> {{ selectedExecutiveObj.celular }}</p>
+            <p class="text-[10px] text-blue-700 font-medium pt-1">Se enviará una notificación por correo al nuevo ejecutivo con los detalles del colegio.</p>
           </div>
         </div>
 
         <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
           <button @click="showEditExecutiveModal = false" class="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs">Cancelar</button>
-          <button @click="saveExecutiveEdit" class="px-5 py-2.5 bg-udd-navy text-white rounded-xl font-bold text-xs shadow-md">Guardar Cambios</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL SCRIPT GOOGLE SHEETS -->
-    <div v-if="showScriptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar border border-slate-100">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="text-lg font-bold text-udd-navy flex items-center">
-            <i class="fa-solid fa-code text-udd-cyan mr-2"></i>
-            Código Google Apps Script
-          </h3>
-          <button @click="showScriptModal = false" class="text-slate-400 hover:text-slate-600">
-            <i class="fa-solid fa-xmark text-xl"></i>
+          <button @click="saveExecutiveEdit" :disabled="isSavingExec || !selectedExecutiveObj" class="px-5 py-2.5 bg-udd-navy text-white rounded-xl font-bold text-xs shadow-md flex items-center gap-2">
+            <span v-if="isSavingExec" class="inline-block animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></span>
+            <span>{{ isSavingExec ? 'Guardando...' : 'Confirmar y Notificar' }}</span>
           </button>
-        </div>
-        
-        <p class="text-xs text-slate-600 leading-relaxed">
-          Para sincronizar automáticamente todas las inscripciones realizadas por los colegios con tu planilla de Google Sheets, abre tu planilla, dirígete a <strong>Extensiones > Apps Script</strong>, pega el código siguiente e impleméntalo como <strong>Aplicación Web</strong>.
-        </p>
-
-        <div class="bg-slate-900 text-slate-200 p-4 rounded-2xl text-[11px] font-mono overflow-x-auto relative">
-          <button @click="copyAppsScript" class="absolute top-3 right-3 bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-xs font-sans text-white transition-all">
-            <i class="fa-solid fa-copy mr-1"></i> Copiar Código
-          </button>
-<pre><code>function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  
-  sheet.appendRow([
-    data.codigoTracking,
-    data.sede,
-    data.rbd,
-    data.nombreColegio,
-    data.comuna,
-    data.cursosResumenTexto,
-    data.totalAlumnos,
-    data.nombreContacto,
-    data.cargoContacto,
-    data.emailContacto,
-    data.celularContacto,
-    data.ejecutivoUDD.nombre,
-    data.ejecutivoUDD.email,
-    data.ejecutivoUDD.celular,
-    new Date()
-  ]);
-  
-  return ContentService.createTextOutput(JSON.stringify({"result":"success"}))
-    .setMimeType(ContentService.MimeType.JSON);
-}</code></pre>
-        </div>
-
-        <div class="flex justify-end pt-2">
-          <button @click="showScriptModal = false" class="px-5 py-2.5 bg-udd-navy text-white rounded-xl text-xs font-bold shadow-md">Cerrar</button>
         </div>
       </div>
     </div>
@@ -504,7 +471,7 @@
           <div class="text-right">
             <span class="text-[10px] font-bold text-slate-400 block uppercase">Código de Registro</span>
             <span class="text-xs font-mono font-extrabold text-udd-blue bg-udd-lightCyan px-2.5 py-1 rounded-lg border border-udd-cyan/30">
-              {{ currentVoucher.codigoTracking }}
+              {{ currentVoucher.codigoRegistro }}
             </span>
           </div>
         </div>
@@ -520,26 +487,24 @@
 
           <div class="bg-slate-50 p-4 rounded-xl space-y-2 border border-slate-100">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Cursos Inscritos y Fechas</div>
-            <div v-for="c in currentVoucher.cursosResumen" :key="c.nombre" class="flex justify-between items-center border-b border-slate-200/50 pb-1.5 last:border-b-0">
-              <span class="font-bold text-slate-700">{{ c.nombre }}</span>
-              <span class="text-slate-600">Fecha: {{ formatDate(c.fecha) }}</span>
-              <span class="font-mono font-bold bg-white px-2 py-0.5 rounded border text-[11px]">{{ c.alumnos }} estudiantes</span>
-            </div>
+            <div v-if="currentVoucher.curso_II_Medio && currentVoucher.curso_II_Medio !== '-'" class="flex justify-between"><span class="text-slate-500">II° Medio:</span> <span class="font-bold">{{ currentVoucher.curso_II_Medio }}</span></div>
+            <div v-if="currentVoucher.curso_III_Medio && currentVoucher.curso_III_Medio !== '-'" class="flex justify-between"><span class="text-slate-500">III° Medio:</span> <span class="font-bold">{{ currentVoucher.curso_III_Medio }}</span></div>
+            <div v-if="currentVoucher.curso_IV_Medio && currentVoucher.curso_IV_Medio !== '-'" class="flex justify-between"><span class="text-slate-500">IV° Medio:</span> <span class="font-bold">{{ currentVoucher.curso_IV_Medio }}</span></div>
+            <div v-if="currentVoucher.curso_Egresados && currentVoucher.curso_Egresados !== '-'" class="flex justify-between"><span class="text-slate-500">Egresados:</span> <span class="font-bold">{{ currentVoucher.curso_Egresados }}</span></div>
+            <div class="pt-2 border-t flex justify-between font-bold text-udd-navy"><span>Total Estudiantes:</span> <span>{{ currentVoucher.totalAlumnos }}</span></div>
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl space-y-2 border border-slate-100">
             <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Contacto del Colegio</div>
-            <div class="flex justify-between"><span class="text-slate-500">Nombre:</span> <span class="font-semibold">{{ currentVoucher.nombreContacto }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Cargo:</span> <span class="font-semibold">{{ currentVoucher.cargoContacto }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Email:</span> <span>{{ currentVoucher.emailContacto }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Teléfono:</span> <span class="font-mono">{{ currentVoucher.celularContacto }}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Nombre:</span> <span class="font-semibold">{{ currentVoucher.contactoNombre }}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Cargo:</span> <span class="font-semibold">{{ currentVoucher.contactoCargo }}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Email:</span> <span>{{ currentVoucher.contactoEmail }}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Teléfono:</span> <span class="font-mono">{{ currentVoucher.contactoCelular }}</span></div>
           </div>
 
           <div class="bg-udd-lightCyan/50 p-4 rounded-xl space-y-1 border border-udd-cyan/20">
-            <div class="text-[10px] font-bold text-udd-navy uppercase tracking-wider mb-1">Ejecutivo UDD Asignado</div>
-            <div class="flex justify-between"><span class="text-slate-500">Ejecutivo:</span> <span class="font-bold text-udd-navy">{{ currentVoucher.ejecutivoUDD?.nombre }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Email:</span> <span>{{ currentVoucher.ejecutivoUDD?.email }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Teléfono:</span> <span class="font-mono">{{ currentVoucher.ejecutivoUDD?.celular }}</span></div>
+            <div class="text-[10px] font-bold text-udd-navy uppercase tracking-wider mb-1">Contacto UDD Asignado</div>
+            <div class="flex justify-between"><span class="text-slate-500">Nombre:</span> <span class="font-bold text-udd-navy">{{ currentVoucher.ejecutivo }}</span></div>
           </div>
         </div>
 
@@ -557,14 +522,14 @@
 
     <!-- FOOTER INSTITUCIONAL -->
     <footer class="bg-udd-navy text-slate-400 text-xs py-6 border-t border-udd-blue/30 mt-auto no-print">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+      <div class="max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
         <div class="flex items-center space-x-2">
           <span class="text-white font-bold">Universidad del Desarrollo</span>
           <span>&amp;</span>
           <span class="text-white font-bold">Fundación Promueva</span>
         </div>
         <div class="text-slate-400 text-[11px]">
-          Panel de Control Interno • Admisión y Difusión
+          Panel de Control Interno • Test de Orientación Vocacional UDD 2026
         </div>
       </div>
     </footer>
@@ -573,7 +538,10 @@
 
   <!-- LÓGICA VUE 3 -->
   <script>
-    const { createApp, ref, computed, onMounted } = Vue;
+    const { createApp, ref, computed, onMounted, nextTick } = Vue;
+
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZucS9vETuOEhB7EIKQb57Vbn8gAPhCljtwIlRdV87EZ7e1tSKVQFh0ppDiwGNprpB8A/exec';
+    const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1xTj3UjKZJToZZ9akh393CvzFEZoj9uJNBbyesHx9jFQ/edit?usp=drive_link';
 
     createApp({
       setup() {
@@ -582,97 +550,52 @@
         const authError = ref(false);
 
         const registrations = ref([]);
+        const ejecutivosDisponibles = ref([]);
         const searchQuery = ref('');
         const filterSede = ref('');
 
+        const isLoading = ref(false);
+        const isSavingExec = ref(false);
+
         const showEditExecutiveModal = ref(false);
         const editingRow = ref({});
-        const editExecForm = ref({ nombre: '', email: '', celular: '' });
+        const selectedExecutiveObj = ref(null);
 
-        const showScriptModal = ref(false);
         const showVoucherModal = ref(false);
         const currentVoucher = ref({});
 
-        // Datos iniciales de prueba (se cargan solo si localStorage está vacío)
-        const initialSeedData = [
-          {
-            codigoTracking: '2026-SCL-8833-1-001',
-            sede: 'Santiago',
-            rbd: '8833-1',
-            nombreColegio: 'Colegio Verbo Divino',
-            comuna: 'Las Condes',
-            cursosResumen: [
-              { nombre: 'III° Medio', fecha: '2026-05-14', alumnos: 60 },
-              { nombre: 'IV° Medio', fecha: '2026-05-14', alumnos: 60 }
-            ],
-            cursosResumenTexto: 'III° Medio (14/05/2026 - 60 est.); IV° Medio (14/05/2026 - 60 est.)',
-            totalAlumnos: 120,
-            nombreContacto: 'Rodrigo Fuentes',
-            cargoContacto: 'Director de Orientación',
-            emailContacto: 'rfuentes@verbodivino.cl',
-            celularContacto: '+56 9 9123 4567',
-            ejecutivoUDD: { nombre: 'Juan Lira', email: 'juan.lira@udd.cl', celular: '+56 9 9123 4567' }
-          },
-          {
-            codigoTracking: '2026-CCP-1045-K-002',
-            sede: 'Concepción',
-            rbd: '1045-K',
-            nombreColegio: 'Colegio Alemán de Concepción',
-            comuna: 'San Pedro de la Paz',
-            cursosResumen: [
-              { nombre: 'II° Medio', fecha: '2026-05-20', alumnos: 40 },
-              { nombre: 'III° Medio', fecha: '2026-05-20', alumnos: 45 }
-            ],
-            cursosResumenTexto: 'II° Medio (20/05/2026 - 40 est.); III° Medio (20/05/2026 - 45 est.)',
-            totalAlumnos: 85,
-            nombreContacto: 'Karin Weber',
-            cargoContacto: 'Coordinadora Académica',
-            emailContacto: 'kweber@dsc.cl',
-            celularContacto: '+56 9 8765 4321',
-            ejecutivoUDD: { nombre: 'Valentina Rojas', email: 'vrojas@udd.cl', celular: '+56 9 8765 4321' }
-          },
-          {
-            codigoTracking: '2026-SCL-9421-3-003',
-            sede: 'Santiago',
-            rbd: '9421-3',
-            nombreColegio: 'Colegio Saint George',
-            comuna: 'Vitacura',
-            cursosResumen: [
-              { nombre: 'IV° Medio', fecha: '2026-06-02', alumnos: 75 }
-            ],
-            cursosResumenTexto: 'IV° Medio (02/06/2026 - 75 est.)',
-            totalAlumnos: 75,
-            nombreContacto: 'Claudia Morales',
-            cargoContacto: 'Orientadora Senior',
-            emailContacto: 'cmorales@saintgeorge.cl',
-            celularContacto: '+56 9 7112 3344',
-            ejecutivoUDD: { nombre: 'Gonzalo Morales', email: 'gmorales@udd.cl', celular: '+56 9 7112 3344' }
-          },
-          {
-            codigoTracking: '2026-CCP-4812-7-004',
-            sede: 'Concepción',
-            rbd: '4812-7',
-            nombreColegio: 'Liceo San Agustín',
-            comuna: 'Concepción',
-            cursosResumen: [
-              { nombre: 'III° Medio', fecha: '2026-06-10', alumnos: 50 },
-              { nombre: 'IV° Medio', fecha: '2026-06-10', alumnos: 50 }
-            ],
-            cursosResumenTexto: 'III° Medio (10/06/2026 - 50 est.); IV° Medio (10/06/2026 - 50 est.)',
-            totalAlumnos: 100,
-            nombreContacto: 'Patricio Soto',
-            cargoContacto: 'Vicerrector Académico',
-            emailContacto: 'psoto@sanagustin.cl',
-            celularContacto: '+56 9 5544 3322',
-            ejecutivoUDD: { nombre: 'Camila Silva', email: 'csilva@udd.cl', celular: '+56 9 5544 3322' }
+        // Referencias para doble scrollbar
+        const topScrollRef = ref(null);
+        const bottomScrollRef = ref(null);
+        const tableElementRef = ref(null);
+        const tableWidth = ref(1200);
+
+        function syncTopScroll() {
+          if (bottomScrollRef.value && topScrollRef.value) {
+            bottomScrollRef.value.scrollLeft = topScrollRef.value.scrollLeft;
           }
-        ];
+        }
+
+        function syncBottomScroll() {
+          if (topScrollRef.value && bottomScrollRef.value) {
+            topScrollRef.value.scrollLeft = bottomScrollRef.value.scrollLeft;
+          }
+        }
+
+        function updateTableWidth() {
+          nextTick(() => {
+            if (tableElementRef.value) {
+              tableWidth.value = tableElementRef.value.scrollWidth || 1200;
+            }
+          });
+        }
 
         function verifyPassword() {
           if (passwordInput.value === 'udd2026') {
             isAuthenticated.value = true;
             authError.value = false;
             sessionStorage.setItem('udd_admin_authed', 'true');
+            loadRegistrations();
           } else {
             authError.value = true;
           }
@@ -684,27 +607,65 @@
           passwordInput.value = '';
         }
 
-        function loadRegistrations() {
-          const stored = localStorage.getItem('udd_vocacional_registros');
-          if (stored) {
-            try {
-              registrations.value = JSON.parse(stored);
-            } catch (e) {
-              registrations.value = [...initialSeedData];
+        async function loadRegistrations(manualClick = false) {
+          isLoading.value = true;
+          try {
+            const res = await fetch(GOOGLE_SCRIPT_URL + '?action=getRegistros');
+            const data = await res.json();
+            if (data && data.status === 'success' && Array.isArray(data.registros)) {
+              registrations.value = data.registros;
+              localStorage.setItem('udd_vocacional_registros_cache', JSON.stringify(data.registros));
+            } else {
+              loadCache();
             }
-          } else {
-            registrations.value = [...initialSeedData];
-            localStorage.setItem('udd_vocacional_registros', JSON.stringify(initialSeedData));
+          } catch (e) {
+            console.warn("Cargando desde caché local:", e);
+            loadCache();
+          } finally {
+            isLoading.value = false;
+            updateTableWidth();
+          }
+
+          loadEjecutivos();
+        }
+
+        async function loadEjecutivos() {
+          try {
+            const res = await fetch(GOOGLE_SCRIPT_URL + '?action=getEjecutivos');
+            const data = await res.json();
+            if (data && data.status === 'success' && Array.isArray(data.ejecutivos)) {
+              ejecutivosDisponibles.value = data.ejecutivos;
+            }
+          } catch (e) {
+            console.warn("Error cargando ejecutivos de Google Sheets:", e);
           }
         }
 
-        function saveRegistrations() {
-          localStorage.setItem('udd_vocacional_registros', JSON.stringify(registrations.value));
+        function loadCache() {
+          const cached = localStorage.getItem('udd_vocacional_registros_cache');
+          if (cached) {
+            try { registrations.value = JSON.parse(cached); } catch(e){}
+          }
+        }
+
+        // Dividir Código en 2 líneas
+        function getCodeLine1(code) {
+          if (!code) return '-';
+          const parts = code.split('-');
+          if (parts.length >= 2) return `${parts[0]}-${parts[1]}`;
+          return code;
+        }
+
+        function getCodeLine2(code) {
+          if (!code) return '';
+          const parts = code.split('-');
+          if (parts.length >= 4) return parts.slice(2).join('-');
+          return '';
         }
 
         // Métricas calculadas
         const totalEstudiantesGeneral = computed(() => {
-          return registrations.value.reduce((sum, r) => sum + (r.totalAlumnos || 0), 0);
+          return registrations.value.reduce((sum, r) => sum + Number(r.totalAlumnos || 0), 0);
         });
 
         const countSantiagoColegios = computed(() => {
@@ -714,7 +675,7 @@
         const totalEstudiantesSantiago = computed(() => {
           return registrations.value
             .filter(r => r.sede === 'Santiago')
-            .reduce((sum, r) => sum + (r.totalAlumnos || 0), 0);
+            .reduce((sum, r) => sum + Number(r.totalAlumnos || 0), 0);
         });
 
         const countConcepcionColegios = computed(() => {
@@ -724,7 +685,7 @@
         const totalEstudiantesConcepcion = computed(() => {
           return registrations.value
             .filter(r => r.sede === 'Concepción')
-            .reduce((sum, r) => sum + (r.totalAlumnos || 0), 0);
+            .reduce((sum, r) => sum + Number(r.totalAlumnos || 0), 0);
         });
 
         // Filtrado dinámico
@@ -732,11 +693,11 @@
           return registrations.value.filter(r => {
             const query = searchQuery.value.toLowerCase().trim();
             const matchesSearch = !query || 
-              r.nombreColegio.toLowerCase().includes(query) ||
-              r.rbd.toLowerCase().includes(query) ||
-              r.comuna.toLowerCase().includes(query) ||
-              r.nombreContacto.toLowerCase().includes(query) ||
-              (r.ejecutivoUDD && r.ejecutivoUDD.nombre.toLowerCase().includes(query));
+              (r.nombreColegio && r.nombreColegio.toLowerCase().includes(query)) ||
+              (r.rbd && r.rbd.toLowerCase().includes(query)) ||
+              (r.comuna && r.comuna.toLowerCase().includes(query)) ||
+              (r.contactoNombre && r.contactoNombre.toLowerCase().includes(query)) ||
+              (r.ejecutivo && r.ejecutivo.toLowerCase().includes(query));
 
             const matchesSede = !filterSede.value || r.sede === filterSede.value;
 
@@ -744,23 +705,41 @@
           });
         });
 
-        // Modal Editar Ejecutivo
+        // Modal Reasignar Ejecutivo
         function openEditExecutiveModal(row) {
           editingRow.value = row;
-          editExecForm.value = { ...row.ejecutivoUDD };
+          selectedExecutiveObj.value = ejecutivosDisponibles.value.find(e => e.nombre === row.ejecutivo) || null;
           showEditExecutiveModal.value = true;
         }
 
-        function saveExecutiveEdit() {
-          editingRow.value.ejecutivoUDD = { ...editExecForm.value };
-          saveRegistrations();
-          showEditExecutiveModal.value = false;
-        }
+        async function saveExecutiveEdit() {
+          if (!selectedExecutiveObj.value) return;
 
-        function deleteRegistration(idx) {
-          if (confirm('¿Está seguro de que desea eliminar este registro?')) {
-            registrations.value.splice(idx, 1);
-            saveRegistrations();
+          isSavingExec.value = true;
+          const payload = {
+            action: 'reassignExecutive',
+            codigoRegistro: editingRow.value.codigoRegistro,
+            nuevoEjecutivoNombre: selectedExecutiveObj.value.nombre,
+            nuevoEjecutivoEmail: selectedExecutiveObj.value.email
+          };
+
+          try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data && data.status === 'success') {
+              editingRow.value.ejecutivo = selectedExecutiveObj.value.nombre;
+              showEditExecutiveModal.value = false;
+            } else {
+              alert("Ocurrió un inconveniente al reasignar: " + (data.message || 'Error desconocido'));
+            }
+          } catch (e) {
+            alert("Error de conexión al reasignar el ejecutivo.");
+          } finally {
+            isSavingExec.value = false;
           }
         }
 
@@ -773,103 +752,23 @@
           window.print();
         }
 
-        function formatDate(dateStr) {
-          if (!dateStr) return '-';
-          const p = dateStr.split('-');
-          if (p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`;
-          return dateStr;
-        }
-
-        function copyAppsScript() {
-          const code = `function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  sheet.appendRow([
-    data.codigoTracking,
-    data.sede,
-    data.rbd,
-    data.nombreColegio,
-    data.comuna,
-    data.cursosResumenTexto,
-    data.totalAlumnos,
-    data.nombreContacto,
-    data.cargoContacto,
-    data.emailContacto,
-    data.celularContacto,
-    data.ejecutivoUDD.nombre,
-    data.ejecutivoUDD.email,
-    data.ejecutivoUDD.celular,
-    new Date()
-  ]);
-  return ContentService.createTextOutput(JSON.stringify({"result":"success"})).setMimeType(ContentService.MimeType.JSON);
-}`;
-          navigator.clipboard.writeText(code);
-          alert('Código de Google Apps Script copiado al portapapeles.');
-        }
-
-        function exportToCSV() {
-          if (registrations.value.length === 0) return;
-
-          const headers = [
-            'CODIGO REGISTRO',
-            'SEDE', 
-            'RBD', 
-            'NOMBRE COLEGIO', 
-            'COMUNA', 
-            'CURSOS Y FECHAS DETALLE', 
-            'TOTAL ESTUDIANTES', 
-            'NOMBRE CONTACTO COLEGIO', 
-            'CARGO CONTACTO',
-            'EMAIL CONTACTO COLEGIO', 
-            'CELULAR CONTACTO COLEGIO', 
-            'EJECUTIVO UDD NOMBRE',
-            'EJECUTIVO UDD EMAIL',
-            'EJECUTIVO UDD CELULAR'
-          ];
-
-          const rows = registrations.value.map(r => [
-            `"${r.codigoTracking || ''}"`,
-            `"${r.sede || ''}"`,
-            `"${r.rbd || ''}"`,
-            `"${(r.nombreColegio || '').replace(/"/g, '""')}"`,
-            `"${(r.comuna || '').replace(/"/g, '""')}"`,
-            `"${(r.cursosResumenTexto || '').replace(/"/g, '""')}"`,
-            `"${r.totalAlumnos || 0}"`,
-            `"${(r.nombreContacto || '').replace(/"/g, '""')}"`,
-            `"${(r.cargoContacto || '').replace(/"/g, '""')}"`,
-            `"${r.emailContacto || ''}"`,
-            `"${r.celularContacto || ''}"`,
-            `"${(r.ejecutivoUDD?.nombre || '').replace(/"/g, '""')}"`,
-            `"${r.ejecutivoUDD?.email || ''}"`,
-            `"${r.ejecutivoUDD?.celular || ''}"`
-          ]);
-
-          const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(e => e.join(';'))].join('\n');
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const link = document.createElement('a');
-          const url = URL.createObjectURL(blob);
-          
-          link.setAttribute('href', url);
-          link.setAttribute('download', `Inscripciones_Test_Vocacional_UDD_Promueva_${new Date().toISOString().slice(0, 10)}.csv`);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-
         onMounted(() => {
           if (sessionStorage.getItem('udd_admin_authed') === 'true') {
             isAuthenticated.value = true;
+            loadRegistrations();
           }
-          loadRegistrations();
+          window.addEventListener('resize', updateTableWidth);
         });
 
         return {
+          GOOGLE_SHEETS_URL,
           isAuthenticated,
           passwordInput,
           authError,
           verifyPassword,
           logout,
           registrations,
+          ejecutivosDisponibles,
           searchQuery,
           filterSede,
           filteredRegistrations,
@@ -878,20 +777,26 @@
           totalEstudiantesSantiago,
           countConcepcionColegios,
           totalEstudiantesConcepcion,
+          isLoading,
+          isSavingExec,
           showEditExecutiveModal,
           editingRow,
-          editExecForm,
+          selectedExecutiveObj,
           openEditExecutiveModal,
           saveExecutiveEdit,
-          deleteRegistration,
-          showScriptModal,
-          copyAppsScript,
           showVoucherModal,
           currentVoucher,
           viewVoucher,
           printVoucher,
-          formatDate,
-          exportToCSV
+          loadRegistrations,
+          getCodeLine1,
+          getCodeLine2,
+          topScrollRef,
+          bottomScrollRef,
+          tableElementRef,
+          tableWidth,
+          syncTopScroll,
+          syncBottomScroll
         };
       }
     }).mount('#app');
